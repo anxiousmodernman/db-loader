@@ -1,11 +1,11 @@
 from sqlalchemy import Column, Integer, String, MetaData, Table
 import csv
+from datasource import dbconfig, engines
 
-# helper functions
 def load_csv_into_memory():
     data = csv.Dictreader(open('donations.csv', 'r'))
 
-def define_fec_master():
+def create_fec_master():
     metadata = MetaData()
     fec_data = Table('donations', metadata
         Column('cmte_id', String),
@@ -27,5 +27,10 @@ def define_fec_master():
         Column('election_tp', String),
         )
 
+def load_to_db():
+    listdata = []
+    for row in data:
+        listdata.append(row)
+    db_engine.execute(fec_data.insert(), listdata)
 
 
