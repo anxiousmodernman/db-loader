@@ -1,0 +1,6 @@
+.dbconfig
+donations.csv
+.idea
+.git
+*~
+script.py
