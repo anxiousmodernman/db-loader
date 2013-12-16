@@ -3,8 +3,9 @@ from sqlalchemy import Column, String, MetaData, Table
 import csv
 from datasource import dbconfig, engines
 
+
 def load_csv_into_memory(file_input):
-    data = csv.Dictreader(open(file_input, 'r'))
+    data = csv.DictReader(open(file_input, 'r'))
     return data
 
 
@@ -28,15 +29,17 @@ def create_fec_master():
         Column('file_num', String),
         Column('tran_id', String),
         Column('election_tp', String),
-        )
-        return fec_data
+    )
+    return fec_data
+
 
 def load_to_db(data, engine):
     listdata = []
     for row in data:
         listdata.append(row)
-    db_engine.execute(fec_data.insert(), listdata)
-    return fec_data
+    fec_table = engine.execute(fec_data.insert(), listdata)
+    return fec_table
+
 
 def main(args):
     cmd_parser = argparse.ArgumentParser(description='Send input the csv loader', prog='fec_dataloader')
@@ -47,5 +50,6 @@ def main(args):
     config = dbconfig
     return main()
 
-if __name__ == '__main__':    
+
+if __name__ == '__main__':
     main(sys.argv[1:])
