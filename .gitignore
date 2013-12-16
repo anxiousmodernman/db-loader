@@ -2,6 +2,7 @@
 script.py
 dbconfig.py
 .idea
-.pyc
+*.pyc
 donations.csv
 helper_functions.py
+
