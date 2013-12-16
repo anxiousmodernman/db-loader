@@ -1,14 +1,14 @@
-import sys
+import sys, argparse
 from sqlalchemy import Column, String, MetaData, Table
 import csv
 from datasource import dbconfig, engines
 
-def load_csv_into_memory(f):
-    data = csv.Dictreader(open(f, 'r'))
+def load_csv_into_memory(file_input):
+    data = csv.Dictreader(open(file_input, 'r'))
 
 def create_fec_master():
     metadata = MetaData()
-    fec_data = Table('donations', metadata
+    fec_data = Table('donations', metadata,
         Column('cmte_id', String),
         Column('cand_id', String),
         Column('contrb_nm', String),
@@ -28,14 +28,14 @@ def create_fec_master():
         Column('election_tp', String),
         )
 
-def load_to_db(list_of_dicts):
+def load_to_db(data):
     listdata = []
     for row in data:
         listdata.append(row)
     db_engine.execute(fec_data.insert(), listdata)
 
 def main(args):
-    cmd_parser = argparse.ArgumentParser(description='Parse arguments to log parser', prog='logparse')
+    cmd_parser = argparse.ArgumentParser(description='Send input the csv loader', prog='fec_dataloader')
     cmd_parser.add_argument('file_input', type=str)
     opts = cmd_parser.parse_args(args)
     f = open(opts.file_input)
