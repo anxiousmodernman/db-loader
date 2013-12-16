@@ -32,7 +32,6 @@ def create_fec_master():
     )
     return fec_data
 
-
 def load_to_db(data, engine):
     listdata = []
     for row in data:
@@ -45,11 +44,10 @@ def main(args):
     cmd_parser = argparse.ArgumentParser(description='Send input the csv loader', prog='fec_dataloader')
     cmd_parser.add_argument('file_input', type=str)
     opts = cmd_parser.parse_args(args)
+    reader = load_csv_into_memory(file_input)
     fec_data = load_to_db(opts.file_input)
     engine = engines.get_postgres_engine()
-    config = dbconfig
-    return main()
-
+    load_to_db(reader, engine)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
