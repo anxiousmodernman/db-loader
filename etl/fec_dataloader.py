@@ -5,6 +5,7 @@ from datasource import dbconfig, engines
 
 def load_csv_into_memory(file_input):
     data = csv.Dictreader(open(file_input, 'r'))
+    return data
 
 
 def create_fec_master():
@@ -28,6 +29,7 @@ def create_fec_master():
         Column('tran_id', String),
         Column('election_tp', String),
         )
+        return fec_data
 
 def load_to_db(data, engine):
     listdata = []
@@ -42,6 +44,8 @@ def main(args):
     opts = cmd_parser.parse_args(args)
     fec_data = load_to_db(opts.file_input)
     engine = engines.get_postgres_engine()
+    config = dbconfig
+    return main()
 
 if __name__ == '__main__':    
     main(sys.argv[1:])
