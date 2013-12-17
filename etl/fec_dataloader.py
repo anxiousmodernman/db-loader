@@ -1,7 +1,8 @@
-import sys, argparse
+import sys
+import argparse
 from sqlalchemy import Column, String, MetaData, Table
 import csv
-from datasource import dbconfig, engines
+from datasource import engines
 
 
 def load_csv_into_memory(file_input):
@@ -9,7 +10,7 @@ def load_csv_into_memory(file_input):
     return data
 
 
-def create_fec_master():
+def create_fec_master(engine): #to do: misused, learn more about SqlAlchemy
     metadata = MetaData()
     fec_data = Table('donations', metadata,
         Column('cmte_id', String),
@@ -30,24 +31,23 @@ def create_fec_master():
         Column('tran_id', String),
         Column('election_tp', String),
     )
+    metadata.create_all(engine)
     return fec_data
 
-def load_to_db(data, engine):
-    listdata = []
-    for row in data:
-        listdata.append(row)
-    fec_table = engine.execute(fec_data.insert(), listdata)
+
+def load_to_db(data, table, engine):
+    fec_table = engine.execute(fec_data. insert())
     return fec_table
 
 
 def main(args):
+    engine = engines.get_postgres_engine()
     cmd_parser = argparse.ArgumentParser(description='Send input the csv loader', prog='fec_dataloader')
     cmd_parser.add_argument('file_input', type=str)
     opts = cmd_parser.parse_args(args)
-    reader = load_csv_into_memory(file_input)
-    fec_data = load_to_db(opts.file_input)
-    engine = engines.get_postgres_engine()
-    load_to_db(reader, engine)
+    data = load_csv_into_memory(opts.file_input)
+    table = create_fec_master(engine)
+    fec_data = load_to_db(data, table, engine)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
