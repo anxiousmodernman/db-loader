@@ -10,12 +10,16 @@ def load_csv_into_memory(file_input):
     return data
 
 
-def create_fec_master(engine): #to do: misused, learn more about SqlAlchemy
+def create_fec_master(engine):
+    # "cmte_id"	"cand_id"	"cand_nm"	"contbr_nm"	"contbr_city"	"contbr_st"	"contbr_zip"
+    # "contbr_employer"	"contbr_occupation"	"contb_receipt_amt"	"contb_receipt_dt"	"receipt_desc"
+    # "memo_cd"	"memo_text"	"form_tp"	"file_num"	"tran_id"	"election_tp"
     metadata = MetaData()
-    fec_data = Table('donations', metadata,
+    fec_data = Table('blownations', metadata,
         Column('cmte_id', String),
         Column('cand_id', String),
-        Column('contrb_nm', String),
+        Column('cand_nm', String),
+        Column('contbr_nm', String),
         Column('contbr_city', String),
         Column('contbr_st', String),
         Column('contbr_zip', String),
@@ -29,15 +33,20 @@ def create_fec_master(engine): #to do: misused, learn more about SqlAlchemy
         Column('form_tp', String),
         Column('file_num', String),
         Column('tran_id', String),
-        Column('election_tp', String),
+        Column('election_tp', String)
     )
     metadata.create_all(engine)
     return fec_data
 
 
 def load_to_db(data, table, engine):
-    fec_table = engine.execute(fec_data. insert())
-    return fec_table
+    data_list = []
+    for row in data:
+        data_list.append(row)
+    statement = table.insert()
+    engine.execute(statement, data_list)
+    print 'did this work?'
+
 
 
 def main(args):
@@ -46,8 +55,9 @@ def main(args):
     cmd_parser.add_argument('file_input', type=str)
     opts = cmd_parser.parse_args(args)
     data = load_csv_into_memory(opts.file_input)
-    table = create_fec_master(engine)
-    fec_data = load_to_db(data, table, engine)
+    print 'checking type'
+    table = create_fec_master(engine)  # returns a table
+    load_to_db(data, table, engine)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

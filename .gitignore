@@ -4,5 +4,5 @@ dbconfig.py
 .idea
 *.pyc
 donations.csv
-helper_functions.py
+
 
